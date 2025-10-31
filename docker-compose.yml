@@ -1,0 +1,36 @@
+version: "3.8"
+
+services:
+  db:
+    image: mariadb:10.6
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: bookstack
+      MYSQL_USER: bookstack
+      MYSQL_PASSWORD: bookstackpass
+    volumes:
+      - db_data:/var/lib/mysql
+
+  bookstack:
+    image: lscr.io/linuxserver/bookstack:latest
+    restart: unless-stopped
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - APP_URL=http://localhost:6875
+      - APP_KEY=base64:Sywh1pzbV4zttn3jCo8XncxN8ZYmBV6BJOC8UrVIQhk=
+      - DB_HOST=db
+      - DB_USER=bookstack
+      - DB_PASS=bookstackpass
+      - DB_DATABASE=bookstack
+    ports:
+      - 6875:80
+    depends_on:
+      - db
+    volumes:
+      - bookstack_data:/config
+
+volumes:
+  db_data:
+  bookstack_data:
