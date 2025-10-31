@@ -54,3 +54,30 @@ Usuário: admin@admin.com Senha: password
 ■ Dica: Se o erro 'Access denied for user database_username' aparecer novamente, verifique se o
 volume antigo foi removido com:
 docker volume rm bookstack_db_data bookstack_bookstack_data
+
+
+
+**Backup e Retauração**
+
+**Volumes**
+docker run --rm -v bookstack_db_data:/volume -v ${PWD}:/backup alpine tar -czf /backup/db_datavolume.tar.gz -C /volume .
+docker run --rm -v bookstack_bookstack_data:/volume -v ${PWD}:/backup alpine tar -czf /backup/bookstack_datavolume.tar.gz -C /volume .
+
+Arquivo 01 ---- bookstack_datavolume.tar.gz --bookstack
+Arquivo 02 ---- db_datavolume.tar.gz -- banco de dados
+
+para restaurar: docker run --rm -v bookstack_db_data:/volume -v ${PWD}:/backup alpine tar -xzf /backup/db_data.tar.gz -C /volume
+
+imagens
+
+  comandos usados
+      docker save -o bookstack_image.tar alessandro254/bookstack-custom:latest
+      docker save -o db_image.tar alessandro254/bookstack-db-custom:latest
+
+Arquivo 01 ----bookstack_image.tar - bookstack
+Arquivo 02 ----db_image.tar - banco de dados
+
+--- como restaurar? --
+docker load -i bookstack_image.tar
+docker load -i db_image.tar
+
